@@ -39,7 +39,8 @@ namespace PCClinicTimeclock
         }
 
         /// <summary>
-        /// Init the connection to the SQLite database
+        /// Init the connection to the SQLite databases for storing time entries
+        /// and error logging
         /// </summary>
         private void InitializeDatabase()
         {
@@ -55,12 +56,22 @@ namespace PCClinicTimeclock
                 ClockOutTime TEXT
             );";
 
+                string createErrorLogTable = @"CREATE TABLE IF NOT EXISTS ErrorLog (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ErrorMessage TEXT NOT NULL,
+                Timestamp TEXT NOT NULL
+            );";
+
                 using var command = new SQLiteCommand(createTableQuery, connection);
                 command.ExecuteNonQuery();
+
+                using var command2 = new SQLiteCommand(createErrorLogTable, connection);
+                command2.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
             }
         }
 
@@ -95,6 +106,7 @@ namespace PCClinicTimeclock
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
             }
 
         }
@@ -136,6 +148,7 @@ namespace PCClinicTimeclock
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
             }
             
         }
@@ -161,6 +174,7 @@ namespace PCClinicTimeclock
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
                 return false; 
             }
             
@@ -195,6 +209,7 @@ namespace PCClinicTimeclock
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
             }
 
             return result;
@@ -214,7 +229,12 @@ namespace PCClinicTimeclock
                 using var connection = new SQLiteConnection(ConnectionString);
                 connection.Open();
 
-                string query = "SELECT EmployeeId, ClockInTime, ClockOutTime FROM TimeEntries WHERE ClockInTime >= @StartDate AND ClockInTime <= @EndDate;";
+                // Adjust the endDate to include the entire day
+                endDate = endDate.AddDays(1).AddTicks(-1);
+
+                string query = @"SELECT EmployeeId, ClockInTime, ClockOutTime 
+                     FROM TimeEntries 
+                     WHERE ClockInTime >= @StartDate AND ClockInTime <= @EndDate;";
                 using var command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@StartDate", startDate.ToString("o"));
                 command.Parameters.AddWithValue("@EndDate", endDate.ToString("o"));
@@ -230,10 +250,12 @@ namespace PCClinicTimeclock
                         ClockOutTime = reader.IsDBNull(2) ? (DateTime?)null : DateTime.Parse(reader.GetString(2))
                     });
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
             }
             
 
@@ -262,11 +284,35 @@ namespace PCClinicTimeclock
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex.Message);
             }
             
         }
 
+        /// <summary>
+        /// Writes out an error to the sql table
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        public void LogError(string errorMessage)
+        {
+            try
+            {
+                using var connection = new SQLiteConnection(ConnectionString);
+                connection.Open();
 
+                string insertErrorQuery = @"INSERT INTO ErrorLog (ErrorMessage, Timestamp) VALUES (@ErrorMessage, @Timestamp);";
+                using var command = new SQLiteCommand(insertErrorQuery, connection);
+                command.Parameters.AddWithValue("@ErrorMessage", errorMessage);
+                command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("o"));
+
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
 
 
     }

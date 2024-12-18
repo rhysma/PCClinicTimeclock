@@ -15,15 +15,15 @@
         </Grid.ColumnDefinitions>
 
         <!-- Date Range Inputs for Reports with DateTimePicker -->
-        <TextBlock Text="Start Date:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5" />
-        <DatePicker x:Name="StartDatePicker" Grid.Row="0" Grid.Column="1" Margin="5" />
-        <TextBlock Text="End Date:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Margin="5" />
-        <DatePicker x:Name="EndDatePicker" Grid.Row="1" Grid.Column="1" Margin="5" />
+        <TextBlock Text="Start Date:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5" FontSize="18"/>
+        <DatePicker x:Name="StartDatePicker" Grid.Row="0" Grid.Column="1" Margin="5" FontSize="18"/>
+        <TextBlock Text="End Date:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Margin="5" FontSize="18"/>
+        <DatePicker x:Name="EndDatePicker" Grid.Row="1" Grid.Column="1" Margin="5" FontSize="18" />
 
         <!-- Generate Report Button -->
-        <Button Content="Generate Report" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Click="GenerateReportButton_Click" />
+        <Button Content="Generate Report" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Click="GenerateReportButton_Click" FontSize="18"/>
 
         <!-- Status Message -->
-        <TextBlock x:Name="StatusTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"/>
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap" FontSize="18"/>
     </Grid>
 </Window>

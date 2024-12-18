@@ -19,20 +19,20 @@
         </Grid.ColumnDefinitions>
 
         <!-- Employee ID Input -->
-        <TextBlock Text="Employee ID:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5" />
-        <TextBox x:Name="EmployeeIdTextBox" Grid.Row="0" Grid.Column="1" Margin="5" />
+        <TextBlock Text="Employee ID:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5" FontSize="18" />
+        <TextBox x:Name="EmployeeIdTextBox" Grid.Row="0" Grid.Column="1" Margin="5" FontSize="18" />
 
         <!-- Clock In Button -->
-        <Button Content="Clock In" Grid.Row="1" Grid.Column="0" Margin="5" Click="ClockInButton_Click" />
+        <Button Content="Clock In" Grid.Row="1" Grid.Column="0" Margin="5" Click="ClockInButton_Click" FontSize="18" />
 
         <!-- Clock Out Button -->
-        <Button Content="Clock Out" Grid.Row="1" Grid.Column="1" Margin="5" Click="ClockOutButton_Click" />
+        <Button Content="Clock Out" Grid.Row="1" Grid.Column="1" Margin="5" Click="ClockOutButton_Click" FontSize="18" />
 
         <!-- Open Report Form Button -->
-        <Button Content="Open Report Form" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Click="AdminViewButton_Click" />
+        <Button Content="Open Report Form" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Click="AdminViewButton_Click" FontSize="18" />
 
         <!-- Status Message -->
-        <TextBlock x:Name="StatusTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"/>
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap" />
 
         <!-- Currently Clocked In List -->
         <ListBox x:Name="CurrentlyClockedInList" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Height="100" />

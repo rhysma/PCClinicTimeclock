@@ -24,7 +24,7 @@ namespace PCClinicTimeclock
         {
             InitializeComponent();
             // Initialize the timer for periodic updates
-            _updateTimer = new System.Timers.Timer(600000); // 10 minutes in milliseconds
+            _updateTimer = new System.Timers.Timer(1000); // 10 minutes in milliseconds
             _updateTimer.Elapsed += UpdateCurrentlyClockedIn;
             _updateTimer.Start();
 
