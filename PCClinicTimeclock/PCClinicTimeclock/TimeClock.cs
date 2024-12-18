@@ -3,11 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SQLite;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace PCClinicTimeclock
 {
     public class TimeClock
     {
+        private const string ConnectionString = "Data Source=timeclock.db;Version=3;";
+        // Stores all time entries.
+        private readonly List<TimeEntry> _timeEntries = new List<TimeEntry>();
+
+        public TimeClock()
+        {
+            InitializeDatabase();
+        }
+
+
         public class TimeEntry
         {
             public int EmployeeId { get; set; }
@@ -20,8 +33,23 @@ namespace PCClinicTimeclock
             }
         }
 
-        // Stores all time entries.
-        private readonly List<TimeEntry> _timeEntries = new List<TimeEntry>();
+        private void InitializeDatabase()
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string createTableQuery = @"CREATE TABLE IF NOT EXISTS TimeEntries (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                EmployeeId INTEGER NOT NULL,
+                ClockInTime TEXT NOT NULL,
+                ClockOutTime TEXT
+            );";
+
+            using var command = new SQLiteCommand(createTableQuery, connection);
+            command.ExecuteNonQuery();
+        }
+
+
 
         // Clock in an employee.
         public void ClockIn(int employeeId)
@@ -32,47 +60,61 @@ namespace PCClinicTimeclock
                 return;
             }
 
-            _timeEntries.Add(new TimeEntry
-            {
-                EmployeeId = employeeId,
-                ClockInTime = DateTime.Now
-            });
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string insertQuery = "INSERT INTO TimeEntries (EmployeeId, ClockInTime) VALUES (@EmployeeId, @ClockInTime);";
+            using var command = new SQLiteCommand(insertQuery, connection);
+            command.Parameters.AddWithValue("@EmployeeId", employeeId);
+            command.Parameters.AddWithValue("@ClockInTime", DateTime.Now.ToString("o"));
+
+            command.ExecuteNonQuery();
 
             Console.WriteLine($"Employee {employeeId} clocked in at {DateTime.Now}.");
         }
 
+
         // Clock out an employee.
         public void ClockOut(int employeeId)
         {
-            var entry = GetActiveTimeEntry(employeeId);
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
 
-            if (entry == null)
+            string selectQuery = "SELECT Id, ClockInTime FROM TimeEntries WHERE EmployeeId = @EmployeeId AND ClockOutTime IS NULL;";
+            using var selectCommand = new SQLiteCommand(selectQuery, connection);
+            selectCommand.Parameters.AddWithValue("@EmployeeId", employeeId);
+
+            using var reader = selectCommand.ExecuteReader();
+            if (!reader.Read())
             {
                 Console.WriteLine($"Employee {employeeId} is not clocked in.");
                 return;
             }
 
-            entry.ClockOutTime = DateTime.Now;
+            int entryId = reader.GetInt32(0);
 
-            Console.WriteLine($"Employee {employeeId} clocked out at {DateTime.Now}. Total time worked: {entry.GetTotalWorkedTime()}.");
+            string updateQuery = "UPDATE TimeEntries SET ClockOutTime = @ClockOutTime WHERE Id = @Id;";
+            using var updateCommand = new SQLiteCommand(updateQuery, connection);
+            updateCommand.Parameters.AddWithValue("@ClockOutTime", DateTime.Now.ToString("o"));
+            updateCommand.Parameters.AddWithValue("@Id", entryId);
+
+            updateCommand.ExecuteNonQuery();
+
+            Console.WriteLine($"Employee {employeeId} clocked out at {DateTime.Now}.");
         }
 
         // Check if an employee is clocked in.
         public bool IsEmployeeClockedIn(int employeeId)
         {
-            return GetActiveTimeEntry(employeeId) != null;
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string query = "SELECT COUNT(1) FROM TimeEntries WHERE EmployeeId = @EmployeeId AND ClockOutTime IS NULL;";
+            using var command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@EmployeeId", employeeId);
+
+            return Convert.ToInt32(command.ExecuteScalar()) > 0;
         }
 
-        // Get the active time entry for an employee.
-        private TimeEntry GetActiveTimeEntry(int employeeId)
-        {
-            return _timeEntries.Find(e => e.EmployeeId == employeeId && !e.ClockOutTime.HasValue);
-        }
-
-        // Retrieve all time entries for reporting purposes.
-        public List<TimeEntry> GetTimeEntries()
-        {
-            return _timeEntries;
-        }
     }
 }

@@ -5,8 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PCClinicTimeclock"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Timeclock Application" Height="300" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
+        <!-- Employee ID Input -->
+        <TextBlock Text="Employee ID:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5" />
+        <TextBox x:Name="EmployeeIdTextBox" Grid.Row="0" Grid.Column="1" Margin="5" />
+
+        <!-- Clock In Button -->
+        <Button Content="Clock In" Grid.Row="1" Grid.Column="0" Margin="5" Click="ClockInButton_Click" />
+
+        <!-- Clock Out Button -->
+        <Button Content="Clock Out" Grid.Row="1" Grid.Column="1" Margin="5" Click="ClockOutButton_Click" />
+
+        <!-- Status Message -->
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"/>
     </Grid>
 </Window>

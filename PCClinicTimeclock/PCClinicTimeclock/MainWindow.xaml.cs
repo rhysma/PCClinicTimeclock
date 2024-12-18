@@ -16,9 +16,42 @@ namespace PCClinicTimeclock
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TimeClock _timeClock = new TimeClock();
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ClockInButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(EmployeeIdTextBox.Text, out int employeeId))
+            {
+                _timeClock.ClockIn(employeeId);
+                UpdateStatus($"Employee {employeeId} clocked in.");
+            }
+            else
+            {
+                UpdateStatus("Invalid Employee ID.");
+            }
+        }
+
+        private void ClockOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(EmployeeIdTextBox.Text, out int employeeId))
+            {
+                _timeClock.ClockOut(employeeId);
+                UpdateStatus($"Employee {employeeId} clocked out.");
+            }
+            else
+            {
+                UpdateStatus("Invalid Employee ID.");
+            }
+        }
+
+        private void UpdateStatus(string message)
+        {
+            StatusTextBlock.Text = message;
         }
     }
 }
