@@ -29,6 +29,7 @@ namespace PCClinicTimeclock
             {
                 _timeClock.ClockIn(employeeId);
                 UpdateStatus($"Employee {employeeId} clocked in.");
+                EmployeeIdTextBox.Clear(); // Clear the textbox after clicking
             }
             else
             {
@@ -53,5 +54,17 @@ namespace PCClinicTimeclock
         {
             StatusTextBlock.Text = message;
         }
+
+        private void AdminViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var currentlyClockedIn = _timeClock.GetCurrentlyClockedIn();
+            string clockedInMessage = "Currently Clocked In:\n" +
+                string.Join("\n", currentlyClockedIn.Select(e => $"Employee {e.EmployeeId} clocked in at {e.ClockInTime}"));
+
+            var reportWindow = new ReportWindow(_timeClock);
+            reportWindow.Show();
+        }
+
     }
+
 }

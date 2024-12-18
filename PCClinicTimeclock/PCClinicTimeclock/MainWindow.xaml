@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PCClinicTimeclock"
         mc:Ignorable="d"
-        Title="Timeclock Application" Height="300" Width="400">
+        Title="Timeclock Application" Height="400" Width="600" Icon="/icon.png" ResizeMode="NoResize">
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -27,7 +28,10 @@
         <!-- Clock Out Button -->
         <Button Content="Clock Out" Grid.Row="1" Grid.Column="1" Margin="5" Click="ClockOutButton_Click" />
 
+        <!-- Open Report Form Button -->
+        <Button Content="Open Report Form" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Click="AdminViewButton_Click" />
+
         <!-- Status Message -->
-        <TextBlock x:Name="StatusTextBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"/>
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"/>
     </Grid>
 </Window>

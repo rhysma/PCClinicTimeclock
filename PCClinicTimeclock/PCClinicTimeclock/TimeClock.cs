@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Windows;
 using System.Windows.Controls;
+using System.IO;
 
 namespace PCClinicTimeclock
 {
@@ -115,6 +116,68 @@ namespace PCClinicTimeclock
 
             return Convert.ToInt32(command.ExecuteScalar()) > 0;
         }
+
+        public List<TimeEntry> GetCurrentlyClockedIn()
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string query = "SELECT EmployeeId, ClockInTime FROM TimeEntries WHERE ClockOutTime IS NULL;";
+            using var command = new SQLiteCommand(query, connection);
+            using var reader = command.ExecuteReader();
+
+            var result = new List<TimeEntry>();
+            while (reader.Read())
+            {
+                result.Add(new TimeEntry
+                {
+                    EmployeeId = reader.GetInt32(0),
+                    ClockInTime = DateTime.Parse(reader.GetString(1))
+                });
+            }
+
+            return result;
+        }
+
+        public List<TimeEntry> GetEntriesForPeriod(DateTime startDate, DateTime endDate)
+        {
+            using var connection = new SQLiteConnection(ConnectionString);
+            connection.Open();
+
+            string query = "SELECT EmployeeId, ClockInTime, ClockOutTime FROM TimeEntries WHERE ClockInTime >= @StartDate AND ClockInTime <= @EndDate;";
+            using var command = new SQLiteCommand(query, connection);
+            command.Parameters.AddWithValue("@StartDate", startDate.ToString("o"));
+            command.Parameters.AddWithValue("@EndDate", endDate.ToString("o"));
+
+            using var reader = command.ExecuteReader();
+
+            var result = new List<TimeEntry>();
+            while (reader.Read())
+            {
+                result.Add(new TimeEntry
+                {
+                    EmployeeId = reader.GetInt32(0),
+                    ClockInTime = DateTime.Parse(reader.GetString(1)),
+                    ClockOutTime = reader.IsDBNull(2) ? (DateTime?)null : DateTime.Parse(reader.GetString(2))
+                });
+            }
+
+            return result;
+        }
+
+        public void ExportToCsv(List<TimeEntry> entries, string filePath)
+        {
+            var csvBuilder = new StringBuilder();
+            csvBuilder.AppendLine("EmployeeId,ClockInTime,ClockOutTime");
+
+            foreach (var entry in entries)
+            {
+                csvBuilder.AppendLine($"{entry.EmployeeId},{entry.ClockInTime},{entry.ClockOutTime}");
+            }
+
+            File.WriteAllText(filePath, csvBuilder.ToString());
+        }
+
 
     }
 }

@@ -1,0 +1,29 @@
+﻿<Window x:Class="PCClinicTimeclock.ReportWindow"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Report Form" Height="300" Width="400" Icon="/icon.png" ResizeMode="NoResize">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Date Range Inputs for Reports with DateTimePicker -->
+        <TextBlock Text="Start Date:" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="5" />
+        <DatePicker x:Name="StartDatePicker" Grid.Row="0" Grid.Column="1" Margin="5" />
+        <TextBlock Text="End Date:" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Margin="5" />
+        <DatePicker x:Name="EndDatePicker" Grid.Row="1" Grid.Column="1" Margin="5" />
+
+        <!-- Generate Report Button -->
+        <Button Content="Generate Report" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" Click="GenerateReportButton_Click" />
+
+        <!-- Status Message -->
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"/>
+    </Grid>
+</Window>
