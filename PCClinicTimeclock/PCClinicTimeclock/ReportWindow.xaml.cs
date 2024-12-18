@@ -32,31 +32,40 @@ namespace PCClinicTimeclock
 
         private void GenerateReportButton_Click(object sender, RoutedEventArgs e)
         {
-            if (StartDatePicker.SelectedDate.HasValue && EndDatePicker.SelectedDate.HasValue)
+            try
             {
-                DateTime startDate = StartDatePicker.SelectedDate.Value;
-                DateTime endDate = EndDatePicker.SelectedDate.Value;
-
-                var entries = _timeClock.GetEntriesForPeriod(startDate, endDate);
-
-                // Prompt to save CSV
-                var saveDialog = new SaveFileDialog
+                if (StartDatePicker.SelectedDate.HasValue && EndDatePicker.SelectedDate.HasValue)
                 {
-                    Filter = "CSV files (*.csv)|*.csv",
-                    DefaultExt = ".csv",
-                    FileName = "TimeReport.csv"
-                };
+                    DateTime startDate = StartDatePicker.SelectedDate.Value;
+                    DateTime endDate = EndDatePicker.SelectedDate.Value;
 
-                if (saveDialog.ShowDialog() == true)
+                    var entries = _timeClock.GetEntriesForPeriod(startDate, endDate);
+
+                    // Prompt to save CSV
+                    var saveDialog = new SaveFileDialog
+                    {
+                        Filter = "CSV files (*.csv)|*.csv",
+                        DefaultExt = ".csv",
+                        FileName = "TimeReport.csv"
+                    };
+
+                    if (saveDialog.ShowDialog() == true)
+                    {
+                        _timeClock.ExportToCsv(entries, saveDialog.FileName);
+                        UpdateStatus("Report saved to " + saveDialog.FileName);
+                    }
+                }
+                else
                 {
-                    _timeClock.ExportToCsv(entries, saveDialog.FileName);
-                    UpdateStatus("Report saved to " + saveDialog.FileName);
+                    UpdateStatus("Please select both start and end dates.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                UpdateStatus("Please select both start and end dates.");
+                Console.WriteLine(ex.Message);
+                UpdateStatus("Error: " + ex.Message);
             }
+            
         }
 
 

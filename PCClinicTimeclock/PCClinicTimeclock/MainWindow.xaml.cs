@@ -25,29 +25,48 @@ namespace PCClinicTimeclock
 
         private void ClockInButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(EmployeeIdTextBox.Text, out int employeeId))
+            try
             {
-                _timeClock.ClockIn(employeeId);
-                UpdateStatus($"Employee {employeeId} clocked in.");
-                EmployeeIdTextBox.Clear(); // Clear the textbox after clicking
+                if (int.TryParse(EmployeeIdTextBox.Text, out int employeeId))
+                {
+                    _timeClock.ClockIn(employeeId);
+                    UpdateStatus($"Employee {employeeId} clocked in.");
+                    EmployeeIdTextBox.Clear(); // Clear the textbox after clicking
+                }
+                else
+                {
+                    UpdateStatus("Invalid Employee ID.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                UpdateStatus("Invalid Employee ID.");
+                Console.WriteLine(ex.Message);
+                UpdateStatus("Error: " + ex.Message);
             }
+
+            
         }
 
         private void ClockOutButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(EmployeeIdTextBox.Text, out int employeeId))
+            try
             {
-                _timeClock.ClockOut(employeeId);
-                UpdateStatus($"Employee {employeeId} clocked out.");
+                if (int.TryParse(EmployeeIdTextBox.Text, out int employeeId))
+                {
+                    _timeClock.ClockOut(employeeId);
+                    UpdateStatus($"Employee {employeeId} clocked out.");
+                }
+                else
+                {
+                    UpdateStatus("Invalid Employee ID.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                UpdateStatus("Invalid Employee ID.");
+                Console.WriteLine(ex.Message);
+                UpdateStatus("Error: " + ex.Message);
             }
+
         }
 
         private void UpdateStatus(string message)
@@ -57,12 +76,21 @@ namespace PCClinicTimeclock
 
         private void AdminViewButton_Click(object sender, RoutedEventArgs e)
         {
-            var currentlyClockedIn = _timeClock.GetCurrentlyClockedIn();
-            string clockedInMessage = "Currently Clocked In:\n" +
-                string.Join("\n", currentlyClockedIn.Select(e => $"Employee {e.EmployeeId} clocked in at {e.ClockInTime}"));
+            try
+            {
+                var currentlyClockedIn = _timeClock.GetCurrentlyClockedIn();
+                string clockedInMessage = "Currently Clocked In:\n" +
+                    string.Join("\n", currentlyClockedIn.Select(e => $"Employee {e.EmployeeId} clocked in at {e.ClockInTime}"));
 
-            var reportWindow = new ReportWindow(_timeClock);
-            reportWindow.Show();
+                var reportWindow = new ReportWindow(_timeClock);
+                reportWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                UpdateStatus("Error: " + ex.Message);
+            }
+            
         }
 
     }
